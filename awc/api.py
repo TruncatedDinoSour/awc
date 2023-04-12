@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""ari-web api wrappers"""
+"""ari-web comments api wrappers"""
 
 import typing
 
@@ -10,7 +10,12 @@ from . import Awc, const, exc, util
 
 
 def post_comment(awc: Awc, content: str) -> typing.List[typing.Union[int, bool]]:
-    """post a comment"""
+    """post a comment
+
+    awc: awc.Awc -- the awc.Awc instance to work on
+    content: str(const.MAX_CONTENT_LEN) -- the comment content
+
+    return typing.List[typing.Union[int, bool]] -- [comment id, is admin]"""
 
     try:
         return awc.post(
@@ -19,13 +24,24 @@ def post_comment(awc: Awc, content: str) -> typing.List[typing.Union[int, bool]]
     except requests.exceptions.InvalidJSONError as e:
         raise exc.UnexpectedResponseError(
             e.response.text, typing.List[typing.Union[int, bool]]
-        )
+        ) from e
 
 
 def get_comments(
     awc: Awc, from_id: int, to_id: int
 ) -> typing.Dict[str, typing.List[typing.Union[str, bool, None]]]:
-    """get comments in range from-to"""
+    """get comments in range from-to, range is to_id >= cid >= from_id
+
+    awc: awc.Awc -- the awc.Awc instance to work on
+    from_id: int -- the comment ID to begin the range from
+    to_id: int -- the comment ID to end the range with
+
+    raise
+        ValueError -- on from_id > to_id
+        ValueError -- on abs(to_id - from_id) > awc.const.MAX_FETCH_COUNT
+        awc.exc.UnexpectedResponseError -- on invalid returned JSON
+
+    return typing.Dict[str, typing.List[typing.Union[str, bool, None]]] -- comments"""
 
     if from_id > to_id:
         raise ValueError(
@@ -44,11 +60,19 @@ larger than {const.MAX_FETCH_COUNT} ( while currently its {diff} )"
         raise exc.UnexpectedResponseError(
             e.response.text,
             typing.Dict[int, typing.List[typing.Union[str, bool, None]]],
-        )
+        ) from e
 
 
 def get_comment(awc: Awc, cid: int) -> typing.List[typing.Union[str, bool, None]]:
-    """get coment by ID"""
+    """get coment by ID
+
+    awc: awc.Awc -- the awc.Awc instance to work on
+    cid: int -- same as both from_id and to_id arguments to `get_comments`
+
+    raise
+        awc.exc.ResouceNotFoundError from KeyError -- on a comment not found
+
+    return typing.List[typing.Union[str, bool, None]] -- the comment"""
 
     try:
         return get_comments(awc, cid, cid)[str(cid)]
@@ -57,7 +81,14 @@ def get_comment(awc: Awc, cid: int) -> typing.List[typing.Union[str, bool, None]
 
 
 def total(awc: Awc) -> int:
-    """total comments count api"""
+    """total comments count api
+
+    awc: awc.Awc -- the awc.Awc instance to work on
+
+    raise
+        awc.exc.UnexpectedResponseError from ValueError -- when returned response is NaN
+
+    return int -- total comments count"""
 
     r: requests.Response = awc.get(api="total")
 
@@ -71,7 +102,16 @@ def total(awc: Awc) -> int:
 def sql(
     awc: Awc, queries: typing.Iterable[str], backup: typing.Optional[str] = None
 ) -> typing.List[typing.List[typing.Any]]:
-    """run SQL queries"""
+    """run SQL queries
+
+    awc: awc.Awc -- the awc.Awc instance to work on
+    queries: typing.Iterable[str] -- the queries to run
+    backup: str | None = None -- optionally set backup database name
+
+    raise
+        awc.exc.UnexpectedResponseError from requests.exceptions.InvalidJSONError --
+            on invalid JSON
+    """
 
     data: typing.Dict[str, typing.Union[typing.Iterable[str], str]] = {"sql": queries}
 
@@ -83,11 +123,17 @@ def sql(
     except requests.exceptions.InvalidJSONError as e:
         raise exc.UnexpectedResponseError(
             e.response.text, typing.Dict[int, typing.List[typing.List[typing.Any]]]
-        )
+        ) from e
 
 
 def apply(awc: Awc, author: str, content: str) -> requests.Response:
-    """apply to the whitelist"""
+    """apply to the whitelist
+
+    awc: awc.Awc -- the awc.Awc instance to work on
+    author: str -- the author / username you want to have
+    content: str -- the reason why youre applying
+
+    return requests.Response -- the apply API response"""
 
     return awc.post(
         api="apply",
@@ -99,21 +145,29 @@ def apply(awc: Awc, author: str, content: str) -> requests.Response:
 
 
 def whoami(awc: Awc) -> str:
-    """returns your username ( if youre in the whitelist )"""
+    """returns your username ( if youre in the whitelist )
+
+    awc: awc.Awc -- the awc.Awc instance to work on"""
     return awc.get(api="whoami").text
 
 
 def get_comment_lock(awc: Awc) -> bool:
-    """gets comments lock status"""
+    """gets comments lock status
+
+    awc: awc.Awc -- the awc.Awc instance to work on"""
     return awc.get(api="lock").text == "1"
 
 
 @Awc.require_key
 def toggle_comment_lock(awc: Awc) -> bool:
-    """toggles comments lock status"""
+    """toggles comments lock status
+
+    awc: awc.Awc -- the awc.Awc instance to work on"""
     return awc.post(api="lock").text == "1"
 
 
 def amiadmin(awc: Awc) -> bool:
-    """returns your admin status ( 1 if API key is correct ( you are admin ) )"""
+    """returns your admin status ( `True` if API key is correct ( you are admin ) )
+
+    awc: awc.Awc -- the awc.Awc instance to work on"""
     return awc.get(api="amiadmin").text == "1"

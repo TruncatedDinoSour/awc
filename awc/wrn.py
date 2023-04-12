@@ -4,7 +4,7 @@
 
 
 class AWCWarning(Warning):
-    """base AWC warning"""
+    """base awc warning"""
 
     message: str
 

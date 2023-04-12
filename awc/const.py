@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""ari-web constants"""
+"""ari-web comments API constants"""
 
 from typing import Tuple
 

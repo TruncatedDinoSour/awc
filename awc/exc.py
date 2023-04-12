@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""AWC exceptions"""
+"""awc exceptions"""
 
 import typing
 
@@ -8,7 +8,7 @@ import requests
 
 
 class AWCException(Exception):
-    """base AWC exception"""
+    """base awc exception"""
 
 
 class InvalidInstanceURLError(AWCException, requests.exceptions.InvalidURL):

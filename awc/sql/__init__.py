@@ -22,7 +22,12 @@ class SQLTable(ABC):
         where: pypika.queries.QueryBuilder,
         *select: str,
     ) -> pypika.queries.QueryBuilder:
-        """select statement"""
+        """select statement
+
+        where: pypika.queries.QueryBuilder -- the condition on which to select
+        *select: str -- what fields to select
+
+        return pypika.queries.QueryBuilder -- the query"""
         return (
             pypika.Query.from_(cls.t)  # type: ignore
             .select(
@@ -36,7 +41,11 @@ class SQLTable(ABC):
         cls,
         where: pypika.queries.QueryBuilder,
     ) -> pypika.queries.QueryBuilder:
-        """select table row"""
+        """select table row
+
+        where: pypika.queries.QueryBuilder -- the condition on which to select
+
+        return pypika.queries.QueryBuilder -- the query"""
         return pypika.Query.from_(cls.t).where(where)  # type: ignore
 
     @classmethod
@@ -44,12 +53,18 @@ class SQLTable(ABC):
         cls,
         *what: typing.Any,
     ) -> pypika.queries.QueryBuilder:
-        """insert statement"""
+        """insert statement
+
+        *what: typing.Any -- VALUES() to insert
+
+        return pypika.queries.QueryBuilder -- the query"""
         return pypika.Query.into(cls.t).insert(what)  # type: ignore
 
     @classmethod
     def all(cls) -> pypika.queries.QueryBuilder:
-        """select the whole table"""
+        """select the whole table
+
+        return pypika.queries.QueryBuilder -- `SELECT * FROM self.t` query"""
         return pypika.Query.from_(cls.t).select("*")  # type: ignore
 
 
@@ -103,10 +118,19 @@ def sql(query: pypika.queries.QueryBuilder) -> str:
 def multisql(
     queries: typing.List[pypika.queries.QueryBuilder],
 ) -> typing.Tuple[str, ...]:
-    """convert a list of queries into a list of SQL string queries"""
+    """convert a list of queries into a list of SQL string queries
+
+    queries: typing.List[pypika.queries.QueryBuilder]
+        -- the queries you want to be converted
+
+    return typing.Tuple[str, ...] -- the converted queries"""
     return tuple(map(sql, queries))
 
 
 def delete(what: pypika.queries.QueryBuilder) -> pypika.queries.QueryBuilder:
-    """delete result from your query"""
+    """delete result from your query
+
+    what: what: pypika.queries.QueryBuilder -- what to delete
+
+    return pypika.queries.QueryBuilder -- the query"""
     return what.delete()  # type: ignore

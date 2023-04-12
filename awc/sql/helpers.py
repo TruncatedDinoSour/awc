@@ -11,7 +11,11 @@ from . import Ban, Comment, IpQueue, IpWhitelist, delete
 
 
 def whitelist(author: str) -> typing.List[pypika.queries.QueryBuilder]:
-    """whitelist a user"""
+    """whitelist a user
+
+    author: str -- the aplicant ( author ) to whitelist from the queue
+
+    return typing.List[pypika.queries.QueryBuilder] -- the queries"""
 
     author = util.truncate(author, const.MAX_AUTHOR_LEN)
 
@@ -25,7 +29,11 @@ def whitelist(author: str) -> typing.List[pypika.queries.QueryBuilder]:
 
 
 def unwhitelist(author: str) -> typing.List[pypika.queries.QueryBuilder]:
-    """unwhitelist a user"""
+    """unwhitelist a user
+
+    author: str -- the aplicant ( author ) to unwhitelist
+
+    return typing.List[pypika.queries.QueryBuilder] -- the queries"""
 
     return [
         delete(
@@ -41,7 +49,11 @@ def unwhitelist(author: str) -> typing.List[pypika.queries.QueryBuilder]:
 
 
 def ban(author: str) -> typing.List[pypika.queries.QueryBuilder]:
-    """ban a user"""
+    """ban and unwhitelist a user
+
+    author: str -- the author to ip ban ( needs to be whitelisted )
+
+    return typing.List[pypika.queries.QueryBuilder] -- the queries"""
 
     author = util.truncate(author, const.MAX_AUTHOR_LEN)
 
@@ -51,7 +63,11 @@ def ban(author: str) -> typing.List[pypika.queries.QueryBuilder]:
 
 
 def unban(ip: str) -> typing.List[pypika.queries.QueryBuilder]:
-    """unban a user"""
+    """unban an IP
+
+    ip: str -- the SHA256 hash of the IP bein unbannned
+
+    return typing.List[pypika.queries.QueryBuilder] -- the queries"""
     return [delete(Ban.query(Ban.ip == ip).limit(1))]  # type: ignore
 
 
@@ -59,7 +75,12 @@ def censor_comments(
     where: pypika.queries.QueryBuilder,
     censoring: str = "[censored]",
 ) -> typing.List[pypika.queries.QueryBuilder]:
-    """censor comments"""
+    """censor comments
+
+    where: pypika.queries.QueryBuilder -- the condition on which to censor
+    censoring: str = "[censored]" -- the string to use for censoring
+
+    return typing.List[pypika.queries.QueryBuilder] -- the queries"""
     return [
         Comment.t.update()  # type: ignore
         .set(Comment.author, censoring)
@@ -72,5 +93,8 @@ def set_comments_admin(
     where: pypika.queries.QueryBuilder,
     value: bool = True,
 ) -> typing.List[pypika.queries.QueryBuilder]:
-    """set admin status on comments"""
+    """set admin status on comments
+
+    where: pypika.queries.QueryBuilder -- the condition on which to set
+    value: bool = True -- the value to set the admin status to"""
     return [Comment.t.update().set(Comment.admin, value).where(where)]  # type: ignore
