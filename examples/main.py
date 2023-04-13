@@ -6,8 +6,8 @@ import typing
 from warnings import filterwarnings as filter_warnings
 
 import awc
-import awc.const
 import awc.api
+import awc.const
 import awc.exc
 import awc.sql  # tip : use pypika as this library is very compatible with it :)
 import awc.sql.helpers
@@ -116,6 +116,21 @@ def main() -> int:
 
     print("you are", "an" if awc.api.amiadmin(api) else "not an", "admin")
 
+    print(f"ill call you {__name__!r} now")
+    print(
+        awc.api.sql(
+            api,
+            awc.sql.sql(
+                awc.sql.IpWhitelist.set(
+                    awc.sql.IpWhitelist.author == author,  # type: ignore
+                    {awc.sql.IpWhitelist.author: __name__},
+                )
+            ),
+        )
+    )
+
+    print("whoami api returned", (author := awc.api.whoami(api)))
+
     print("imma ban you wait")
     print(awc.api.sql(api, awc.sql.multisql(awc.sql.helpers.ban(author))))
 
@@ -125,6 +140,9 @@ def main() -> int:
     # dw you can whitelist too
     print("lol okok wait, ill unban you :) ( i wont whitelist you bc i said so !! )")
     print(awc.api.sql(api, awc.sql.multisql(awc.sql.helpers.unban(author))))
+
+    # close the connection and stuff
+    api.end()  # note : you can also use a `with` context manager
 
     return 0
 

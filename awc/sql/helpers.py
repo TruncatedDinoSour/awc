@@ -48,6 +48,16 @@ def unwhitelist(author: str) -> typing.List[pypika.queries.QueryBuilder]:
     ]
 
 
+def ban_ip(ip: pypika.queries.QueryBuilder) -> typing.List[pypika.queries.QueryBuilder]:
+    """ban an ip
+
+    ip: pypika.queries.QueryBuilder -- the query to get the user ip
+
+    return typing.List[pypika.queries.QueryBuilder] -- the queries"""
+
+    return [Ban.add(ip)]  # type: ignore
+
+
 def ban(author: str) -> typing.List[pypika.queries.QueryBuilder]:
     """ban and unwhitelist a user
 
@@ -58,14 +68,14 @@ def ban(author: str) -> typing.List[pypika.queries.QueryBuilder]:
     author = util.truncate(author, const.MAX_AUTHOR_LEN)
 
     return [
-        Ban.add(IpWhitelist.select(IpWhitelist.author == author, "ip"))  # type: ignore
+        *ban_ip(IpWhitelist.select(IpWhitelist.author == author, "ip"))  # type: ignore
     ] + unwhitelist(author)
 
 
 def unban(ip: str) -> typing.List[pypika.queries.QueryBuilder]:
     """unban an IP
 
-    ip: str -- the SHA256 hash of the IP bein unbannned
+    ip: str -- the SHA256 hash of the IP being unbannned
 
     return typing.List[pypika.queries.QueryBuilder] -- the queries"""
     return [delete(Ban.query(Ban.ip == ip).limit(1))]  # type: ignore
@@ -82,19 +92,11 @@ def censor_comments(
 
     return typing.List[pypika.queries.QueryBuilder] -- the queries"""
     return [
-        Comment.t.update()  # type: ignore
-        .set(Comment.author, censoring)
-        .set(Comment.content, censoring)
-        .where(where)
+        Comment.set(
+            where,
+            {
+                Comment.author: censoring,
+                Comment.content: censoring,
+            },
+        )
     ]
-
-
-def set_comments_admin(
-    where: pypika.queries.QueryBuilder,
-    value: bool = True,
-) -> typing.List[pypika.queries.QueryBuilder]:
-    """set admin status on comments
-
-    where: pypika.queries.QueryBuilder -- the condition on which to set
-    value: bool = True -- the value to set the admin status to"""
-    return [Comment.t.update().set(Comment.admin, value).where(where)]  # type: ignore

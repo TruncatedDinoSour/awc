@@ -11,7 +11,7 @@ from furl import furl  # type: ignore
 
 from . import const, exc, util
 
-__version__: typing.Final[str] = "1.1.0"
+__version__: typing.Final[str] = "1.2.0"
 
 
 class Awc:
@@ -54,13 +54,15 @@ class Awc:
         raise
             awc.exc.InvalidAPIKeyError -- on invalid API key"""
 
+        self.__api_key = value
+
         if value is not None and self.get(api="amiadmin").text != "1":
+            self.__api_key = None
+
             raise exc.InvalidAPIKeyError(
                 f"{value[:5]}{'*' * (len(value) - 5)}"[:50]
                 + (" ..." if len(value) > 50 else "")
             )
-
-        self.__api_key = value
 
     @property
     def rate_limit_wait(self) -> typing.Union[int, float]:
@@ -126,6 +128,12 @@ class Awc:
         return str -- the URL"""
         return self.instance.join(path).url  # type: ignore
 
+    def __enter__(self) -> "Awc":
+        return self
+
+    def __exit__(self, *_: typing.Any) -> None:
+        self.end()
+
     def request(
         self,
         method: typing.Callable[..., requests.Response],
@@ -186,6 +194,12 @@ class Awc:
     def post(self, *args: typing.Any, **kwargs: typing.Any) -> requests.Response:
         """similar to `Awc.request` but for POST requests"""
         return self.request(self.session.post, *args, **kwargs)
+
+    def end(self) -> None:
+        """end an instance ( close it )"""
+
+        self.__api_key = None
+        self.session.close()
 
     @staticmethod
     def require_key(

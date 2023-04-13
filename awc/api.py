@@ -111,7 +111,9 @@ def sql(
     raise
         awc.exc.UnexpectedResponseError from requests.exceptions.InvalidJSONError --
             on invalid JSON
-    """
+        ValueError -- on invalid queries
+
+    return typing.List[typing.List[typing.Any]] -- query results"""
 
     data: typing.Dict[str, typing.Union[typing.Iterable[str], str]] = {"sql": queries}
 
@@ -155,7 +157,7 @@ def get_comment_lock(awc: Awc) -> bool:
     """gets comments lock status
 
     awc: awc.Awc -- the awc.Awc instance to work on"""
-    return awc.get(api="lock").text == "1"
+    return util.resp_to_bool(awc.get(api="lock").text)
 
 
 @Awc.require_key
@@ -163,11 +165,11 @@ def toggle_comment_lock(awc: Awc) -> bool:
     """toggles comments lock status
 
     awc: awc.Awc -- the awc.Awc instance to work on"""
-    return awc.post(api="lock").text == "1"
+    return util.resp_to_bool(awc.post(api="lock").text)
 
 
 def amiadmin(awc: Awc) -> bool:
     """returns your admin status ( `True` if API key is correct ( you are admin ) )
 
     awc: awc.Awc -- the awc.Awc instance to work on"""
-    return awc.get(api="amiadmin").text == "1"
+    return util.resp_to_bool(awc.get(api="amiadmin").text)

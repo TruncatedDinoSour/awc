@@ -45,3 +45,13 @@ def truncate(content: str, length: int, do_warn: bool = True) -> str:
         warn(ContentTruncatedWarning(content, length))
 
     return content[:length]
+
+
+def resp_to_bool(resp: str) -> bool:
+    """convets a response like 0 and 1 to boolean
+
+    resp: str -- the response
+
+    return bool -- the converted boolean"""
+
+    return resp == "1"

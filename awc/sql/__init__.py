@@ -67,6 +67,33 @@ class SQLTable(ABC):
         return pypika.queries.QueryBuilder -- `SELECT * FROM self.t` query"""
         return pypika.Query.from_(cls.t).select("*")  # type: ignore
 
+    @classmethod
+    def set(
+        cls,
+        where: pypika.queries.QueryBuilder,
+        what: typing.Dict[pypika.Column, typing.Any],
+    ) -> pypika.queries.QueryBuilder:
+        """SET statement
+
+        where: pypika.queries.QueryBuilder -- the condition on which to set
+        what: dict[pypika.Column, typing.Any] -- the columns and values to set
+
+        return pypika.queries.QueryBuilder -- the query"""
+        q: pypika.queries.QueryBuilder = cls.t.update()
+
+        for k, v in what.items():
+            q = q.set(k, v)  # type: ignore
+
+        return q.where(where)  # type: ignore
+
+    @classmethod
+    def purge(cls) -> pypika.queries.QueryBuilder:
+        """purge the table ( delete everything ) **BE CAREFUL**
+
+        return pypika.queries.QueryBuilder -- the query"""
+
+        return pypika.Query.from_(cls.t).delete()  # type: ignore
+
 
 class Comment(SQLTable):
     """comment / post table"""
