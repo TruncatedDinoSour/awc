@@ -54,7 +54,13 @@ class Awc:
         raise
             awc.exc.InvalidAPIKeyError -- on invalid API key"""
 
-        api_key: typing.Optional[str] = self.__api_key
+        api_key: typing.Optional[str]
+
+        try:
+            api_key = self.__api_key
+        except AttributeError:
+            api_key = None
+
         self.__api_key = value
 
         if value is not None and self.get(api="amiadmin").text != "1":
