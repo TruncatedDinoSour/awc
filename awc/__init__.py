@@ -11,7 +11,7 @@ from furl import furl  # type: ignore
 
 from . import const, exc, util
 
-__version__: typing.Final[str] = "1.2.1"
+__version__: typing.Final[str] = "1.2.2"
 
 
 class Awc:
@@ -54,10 +54,11 @@ class Awc:
         raise
             awc.exc.InvalidAPIKeyError -- on invalid API key"""
 
+        api_key: typing.Optional[str] = self.__api_key
         self.__api_key = value
 
         if value is not None and self.get(api="amiadmin").text != "1":
-            self.__api_key = None
+            self.__api_key = api_key
 
             raise exc.InvalidAPIKeyError(
                 f"{value[:5]}{'*' * (len(value) - 5)}"[:50]
