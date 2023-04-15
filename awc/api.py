@@ -173,3 +173,10 @@ def amiadmin(awc: Awc) -> bool:
 
     awc: awc.Awc -- the awc.Awc instance to work on"""
     return util.resp_to_bool(awc.get(api="amiadmin").text)
+
+
+def applied(awc: Awc) -> bool:
+    """returns your application status ( `True` if applied / accepted )
+
+    awc: awc.Awc -- the awc.Awc instance to work on"""
+    return util.resp_to_bool(awc.get(api="applied").text)
