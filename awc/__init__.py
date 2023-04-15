@@ -11,7 +11,7 @@ from furl import furl  # type: ignore
 
 from . import const, exc, util
 
-__version__: typing.Final[str] = "1.2.3"
+__version__: typing.Final[str] = "1.2.4"
 
 
 class Awc:

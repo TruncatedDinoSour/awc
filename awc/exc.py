@@ -11,7 +11,7 @@ class AWCException(Exception):
     """base awc exception"""
 
 
-class InvalidInstanceURLError(AWCException, requests.exceptions.InvalidURL):
+class InvalidInstanceURLError(AWCException):
     """raised when an API instance URL isnt valid"""
 
     instance: str
@@ -21,7 +21,7 @@ class InvalidInstanceURLError(AWCException, requests.exceptions.InvalidURL):
         self.instance: str = instance
 
 
-class APIRequestFailedError(AWCException, requests.exceptions.HTTPError):
+class APIRequestFailedError(AWCException):
     """raised when a request to an API fails"""
 
     api: str
@@ -32,15 +32,15 @@ class APIRequestFailedError(AWCException, requests.exceptions.HTTPError):
         self.response: requests.Response = response
 
 
-class NoAPIKeyError(AWCException, PermissionError):
+class NoAPIKeyError(AWCException):
     """raised when no API key is provided"""
 
 
-class InvalidAPIKeyError(AWCException, PermissionError):
+class InvalidAPIKeyError(AWCException):
     """raised when the API key is invalid"""
 
 
-class UnexpectedResponseError(AWCException, ValueError):
+class UnexpectedResponseError(AWCException):
     """raised when the API returns an unexpected response"""
 
     def __init__(self, value: str, expected: type) -> None:
@@ -51,7 +51,7 @@ class UnexpectedResponseError(AWCException, ValueError):
         self.expected: type = expected
 
 
-class ResouceNotFoundError(AWCException, ValueError):
+class ResouceNotFoundError(AWCException):
     """raised when the API doesnt return the requested resource"""
 
     def __init__(self, value: typing.Any) -> None:
