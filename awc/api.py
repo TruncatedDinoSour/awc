@@ -180,3 +180,19 @@ def applied(awc: Awc) -> bool:
 
     awc: awc.Awc -- the awc.Awc instance to work on"""
     return util.resp_to_bool(awc.get(api="applied").text)
+
+
+def anon(awc: Awc, content: str) -> requests.Response:
+    """send message to server anonymously
+
+    awc: awc.Awc -- the awc.Awc instance to work on
+    content: str -- the reason why youre applying
+
+    return requests.Response -- the id of the message"""
+
+    return awc.post(
+        api="anon",
+        data={
+            "content": util.truncate(content, const.MAX_CONTENT_LEN),
+        },
+    )

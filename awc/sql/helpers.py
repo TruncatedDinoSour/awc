@@ -7,7 +7,7 @@ import typing
 import pypika.queries  # type: ignore
 
 from .. import const, util
-from . import Ban, Comment, IpQueue, IpWhitelist, delete
+from . import AnonMsg, Ban, Comment, IpQueue, IpWhitelist, delete
 
 
 def whitelist(author: str) -> typing.List[pypika.queries.QueryBuilder]:
@@ -100,3 +100,21 @@ def censor_comments(
             },
         )
     ]
+
+
+def get_anon_msg(cid: int) -> typing.List[pypika.queries.QueryBuilder]:
+    """get an anonymous message by id
+
+    cid: int -- content id
+
+    return typing.List[pypika.queries.QueryBuilder] -- the queries"""
+    return [AnonMsg.select(AnonMsg.cid == cid, AnonMsg.content)]  # type: ignore
+
+
+def del_anon_msg(cid: int) -> typing.List[pypika.queries.QueryBuilder]:
+    """delete an anonymous message by id
+
+    cid: int -- content id
+
+    return typing.List[pypika.queries.QueryBuilder] -- the queries"""
+    return [delete(AnonMsg.query(AnonMsg.cid == cid))]  # type: ignore

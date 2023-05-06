@@ -137,6 +137,16 @@ class IpQueue(SQLTable):
     content: pypika.Column = t.content  # type: ignore
 
 
+class AnonMsg(SQLTable):
+    """anonymous message table"""
+
+    tname: str = "anon"
+    t: pypika.Table = pypika.Table(tname)
+
+    cid: pypika.Column = t.cid  # type: ignore
+    content: pypika.Column = t.content  # type: ignore
+
+
 def sql(query: pypika.queries.QueryBuilder) -> str:
     """return an sql query"""
     return query.get_sql()

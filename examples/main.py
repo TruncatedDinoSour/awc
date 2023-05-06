@@ -131,6 +131,19 @@ def main() -> int:
 
     print("whoami api returned", (author := awc.api.whoami(api)))
 
+    print(
+        "anon message with id",
+        (anon_id := int(awc.api.anon(api, infinput("anonymous message")).text)),
+    )
+
+    print(
+        "anon msg :",
+        awc.api.sql(api, awc.sql.multisql(awc.sql.helpers.get_anon_msg(anon_id))),
+    )
+
+    print("deleting the anon msg")
+    print(awc.api.sql(api, awc.sql.multisql(awc.sql.helpers.del_anon_msg(anon_id))))
+
     print("imma ban you wait")
     print(awc.api.sql(api, awc.sql.multisql(awc.sql.helpers.ban(author))))
 
@@ -139,7 +152,9 @@ def main() -> int:
 
     # dw you can whitelist too
     print("lol okok wait, ill unban you :) ( i wont whitelist you bc i said so !! )")
-    print(awc.api.sql(api, awc.sql.multisql(awc.sql.helpers.unban(author))))
+    # nvm u need to unban by ip lol
+    # print(awc.api.sql(api, awc.sql.multisql(awc.sql.helpers.unban(author))))
+    print(awc.api.sql(api, "DELETE FROM bans"))
 
     # close the connection and stuff
     api.end()  # note : you can also use a `with` context manager
