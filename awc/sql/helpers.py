@@ -102,19 +102,19 @@ def censor_comments(
     ]
 
 
-def get_anon_msg(cid: int) -> typing.List[pypika.queries.QueryBuilder]:
+def get_anon_msg(ip: str) -> typing.List[pypika.queries.QueryBuilder]:
     """get an anonymous message by id
 
-    cid: int -- content id
+    ip: str -- content id ( ip )
 
     return typing.List[pypika.queries.QueryBuilder] -- the queries"""
-    return [AnonMsg.select(AnonMsg.cid == cid, AnonMsg.content)]  # type: ignore
+    return [AnonMsg.select(AnonMsg.cid == ip, AnonMsg.content)]  # type: ignore
 
 
-def del_anon_msg(cid: int) -> typing.List[pypika.queries.QueryBuilder]:
+def del_anon_msg(ip: str) -> typing.List[pypika.queries.QueryBuilder]:
     """delete an anonymous message by id
 
-    cid: int -- content id
+    ip: str -- content id ( ip )
 
     return typing.List[pypika.queries.QueryBuilder] -- the queries"""
-    return [delete(AnonMsg.query(AnonMsg.cid == cid))]  # type: ignore
+    return [delete(AnonMsg.query(AnonMsg.cid == ip))]  # type: ignore

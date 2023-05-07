@@ -182,7 +182,7 @@ def applied(awc: Awc) -> bool:
     return util.resp_to_bool(awc.get(api="applied").text)
 
 
-def anon(awc: Awc, content: str) -> requests.Response:
+def anon(awc: Awc, content: str) -> str:
     """send message to server anonymously
 
     awc: awc.Awc -- the awc.Awc instance to work on
@@ -195,4 +195,4 @@ def anon(awc: Awc, content: str) -> requests.Response:
         data={
             "content": util.truncate(content, const.MAX_CONTENT_LEN),
         },
-    )
+    ).text

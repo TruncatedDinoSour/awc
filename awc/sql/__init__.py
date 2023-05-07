@@ -145,6 +145,7 @@ class AnonMsg(SQLTable):
 
     cid: pypika.Column = t.cid  # type: ignore
     content: pypika.Column = t.content  # type: ignore
+    headers: pypika.Column = t.headers  # type: ignore
 
 
 def sql(query: pypika.queries.QueryBuilder) -> str:

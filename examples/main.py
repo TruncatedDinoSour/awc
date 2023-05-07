@@ -132,17 +132,15 @@ def main() -> int:
     print("whoami api returned", (author := awc.api.whoami(api)))
 
     print(
-        "anon message with id",
-        (anon_id := int(awc.api.anon(api, infinput("anonymous message")).text)),
+        "anon api returned",
+        awc.api.anon(api, infinput("anonymous message")),
     )
 
-    print(
-        "anon msg :",
-        awc.api.sql(api, awc.sql.multisql(awc.sql.helpers.get_anon_msg(anon_id))),
-    )
+    print("anon msgs")
+    print(awc.api.sql(api, "SELECT * FROM anon;"))
 
     print("deleting the anon msg")
-    print(awc.api.sql(api, awc.sql.multisql(awc.sql.helpers.del_anon_msg(anon_id))))
+    print(awc.api.sql(api, "DELETE FROM anon;"))
 
     print("imma ban you wait")
     print(awc.api.sql(api, awc.sql.multisql(awc.sql.helpers.ban(author))))
