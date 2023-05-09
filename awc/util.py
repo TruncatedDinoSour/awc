@@ -41,10 +41,12 @@ def truncate(content: str, length: int, do_warn: bool = True) -> str:
 
     return str -- the truncated content"""
 
+    content = content.strip()
+
     if do_warn and len(content) > length:
         warn(ContentTruncatedWarning(content, length))
 
-    return content[:length]
+    return content[:length].strip()
 
 
 def resp_to_bool(resp: str) -> bool:
