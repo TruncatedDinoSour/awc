@@ -143,9 +143,8 @@ class AnonMsg(SQLTable):
     tname: str = "anon"
     t: pypika.Table = pypika.Table(tname)
 
-    cid: pypika.Column = t.cid  # type: ignore
+    ip: pypika.Column = t.ip  # type: ignore
     content: pypika.Column = t.content  # type: ignore
-    headers: pypika.Column = t.headers  # type: ignore
 
 
 def sql(query: pypika.queries.QueryBuilder) -> str:

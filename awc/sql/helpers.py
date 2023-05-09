@@ -108,7 +108,7 @@ def get_anon_msg(ip: str) -> typing.List[pypika.queries.QueryBuilder]:
     ip: str -- content id ( ip )
 
     return typing.List[pypika.queries.QueryBuilder] -- the queries"""
-    return [AnonMsg.select(AnonMsg.cid == ip, AnonMsg.content)]  # type: ignore
+    return [AnonMsg.select(AnonMsg.ip == ip, AnonMsg.content)]  # type: ignore
 
 
 def del_anon_msg(ip: str) -> typing.List[pypika.queries.QueryBuilder]:
@@ -117,4 +117,4 @@ def del_anon_msg(ip: str) -> typing.List[pypika.queries.QueryBuilder]:
     ip: str -- content id ( ip )
 
     return typing.List[pypika.queries.QueryBuilder] -- the queries"""
-    return [delete(AnonMsg.query(AnonMsg.cid == ip))]  # type: ignore
+    return [delete(AnonMsg.query(AnonMsg.ip == ip))]  # type: ignore
