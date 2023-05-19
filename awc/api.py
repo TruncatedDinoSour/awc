@@ -196,3 +196,13 @@ def anon(awc: Awc, content: str) -> str:
             "content": util.truncate(content, const.MAX_CONTENT_LEN),
         },
     ).text
+
+
+def visit(awc: Awc) -> str:
+    """visit api
+
+    awc: awc.Awc -- the awc.Awc instance to work on
+
+    return str -- the returned svg"""
+
+    return awc.get(api="visit").text
